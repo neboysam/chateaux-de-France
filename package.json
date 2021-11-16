@@ -1,0 +1,27 @@
+{
+  "name": "chateaux-en-france",
+  "version": "1.0.0",
+  "description": "A simple catalogue of castles in France created in Node JS",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neboysam/chateaux-de-France.git"
+  },
+  "keywords": [
+    "node",
+    "js",
+    "catalogue",
+    "of",
+    "castles",
+    "France"
+  ],
+  "author": "neboysam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neboysam/chateaux-de-France/issues"
+  },
+  "homepage": "https://github.com/neboysam/chateaux-de-France#readme"
+}
