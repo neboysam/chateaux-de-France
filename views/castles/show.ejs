@@ -1,0 +1,26 @@
+<% layout('layouts/boilerplate')%>
+
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="card mb-3">
+            <img src="<%= castle.image%>" class="card-img-top" alt="castle photo">
+            <div class="card-body">
+                <h5 class="card-title"><%= castle.title%></h5>
+                <p class="card-text"><%= castle.description%></p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-muted">Région: <%= castle.location%></li>
+                <li class="list-group-item">Tarif de visite: <%= castle.price%> €</li>
+            </ul>
+            <div class="card-body">
+                <a class="card-link btn btn-info" href="#">Edit</a>
+                <form class="d-inline" action="" method="">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+            <div class="card-footer text-muted">
+                2 days ago
+            </div>
+        </div>
+    </div>
+</div>
