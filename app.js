@@ -49,13 +49,14 @@ app.post('/castles', async (req, res) => {
   res.redirect('/castles');
 });
 
-//show a castle
+//show the selected castle
 app.get('/castles/:id', async (req, res) => {
   const { id } = req.params;
   const castle = await Castle.findById(id);
   res.render('castles/show', { castle });
 });
 
+//form to update the selected castle
 
 
 app.listen(3000, () => {
