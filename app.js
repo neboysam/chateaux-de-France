@@ -49,27 +49,35 @@ app.post('/castles', async (req, res) => {
   res.redirect('/castles');
 });
 
-//show the selected castle
+//show castle
 app.get('/castles/:id', async (req, res) => {
   const { id } = req.params;
   const castle = await Castle.findById(id);
   res.render('castles/show', { castle });
 });
 
-//form to update the selected castle
+//form to update castle
 app.get('/castles/:id/edit', async (req, res) => {
   const { id } = req.params;
   const castle = await Castle.findById(id);
   res.render('./castles/edit', { castle });
 });
 
-//update the selected castle
+//update castle
 app.put('/castles/:id', async (req, res) => {
   const { id } = req.params;
   const { castle } = req.body;
   const newCastle = await Castle.findByIdAndUpdate(id, castle);
   await newCastle.save();
   res.redirect(`/castles/${newCastle._id}`);
+});
+
+//delete castle
+app.delete('/castles/:id', async (req, res) => {
+  const { id } = req.params;
+  await Castle.deleteOne({id});
+  //await Castle.findByIdAndDelete(id);
+  res.redirect('/castles');
 });
 
 app.listen(3000, () => {
