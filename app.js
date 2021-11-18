@@ -57,7 +57,20 @@ app.get('/castles/:id', async (req, res) => {
 });
 
 //form to update the selected castle
+app.get('/castles/:id/edit', async (req, res) => {
+  const { id } = req.params;
+  const castle = await Castle.findById(id);
+  res.render('./castles/edit', { castle });
+});
 
+//update the selected castle
+app.put('/castles/:id', async (req, res) => {
+  const { id } = req.params;
+  const { castle } = req.body;
+  const newCastle = await Castle.findByIdAndUpdate(id, castle);
+  await newCastle.save();
+  res.redirect(`/castles/${newCastle._id}`);
+});
 
 app.listen(3000, () => {
   console.log("Castles: Server is started on port 3000");

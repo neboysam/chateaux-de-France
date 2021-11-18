@@ -1,0 +1,52 @@
+<% layout('layouts/boilerplate') %>
+
+  <div class="row">
+    <h1 class="text-center">Update Castle</h1>
+    <div class="col-6 offset-3">
+      <form action="/castles/<%= castle._id %>?_method=PUT" method="POST" novalidate class="validated-form">
+        <div class="mb-3">
+          <label class="form-label" for="title">Title</label>
+          <input class="form-control" type="text" id="title" name="castle[title]" value="<%= castle.title %>" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="location">Location</label>
+          <input class="form-control" type="text" id="location" name="castle[location]" value="<%= castle.location %>" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="image">Image Url</label>
+          <input class="form-control" type="text" id="image" name="castle[image]" value="<%= castle.image %>" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="price">Price</label>
+          <div class="input-group">
+            <span class="input-group-text" id="price-label">$</span>
+            <input type="text" class="form-control" id="price" placeholder="0.00" aria-label="price"
+              aria-describedby="price-label" name="castle[price]" value="<%= castle.price %>" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="description">Description</label>
+          <textarea row="20" class="form-control" type="text" id="description" name="castle[description]" required><%= castle.description %></textarea>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+        </div>
+        <div class="d-flex mb-3">
+          <button class="btn btn-success">Update Castle</button>
+          <a class="btn btn-outline-info mx-1" href="/castles/<%= castle._id %>">Back to Castle</a>
+        </div>
+      </form>
+    </div>
+  </div>
