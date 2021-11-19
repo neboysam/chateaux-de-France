@@ -8,8 +8,12 @@ const Joi = require('joi');
 const path = require('path');
 const methodOverride = require('method-override');
 const Castle = require('./models/castle');
+const Review = require('./models/review');
 const ExpressError = require('./utils/ExpressError');
 const catchAsync = require('./utils/catchAsync');
+const reviewRoutes = require('./routes/reviews');
+/* const { reviewSchema } = require('./schemas'); */
+const { castleSchema } = require('./schemas');
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -28,11 +32,27 @@ db.once('open', () => {
   console.log('Database connected.');
 });
 
+//routes middleware
+app.use('/castles/:id/review', reviewRoutes);
+
+const validateCastle = (req, res, next) => {
+  const { error } = castleSchema.validate(req.body);
+  if(error) {
+    const msg = error.details.map(el => el.message).join(',');
+    throw new ExpressError(400, msg);
+  } else {
+    next();
+  }
+}
+
 //main page
 app.get('/', (req, res) => {
   res.render('./home');
 });
 
+//===========================================
+//CASTLES ROUTES
+//===========================================
 //homepage with all castles
 app.get('/castles', catchAsync(async (req, res) => {
   const castles = await Castle.find({});
@@ -45,24 +65,10 @@ app.get('/castles/new', (req, res) => {
 });
 
 //add new castle into db
-app.post('/castles', catchAsync(async (req, res, next) => {
+app.post('/castles', validateCastle, catchAsync(async (req, res, next) => {
   const { castle } = req.body;
   /* if(!castle) throw new ExpressError(400, 'Invalid Castle Data'); */ //all the form fields are empty = !req.body.castle
-  const castleSchema = Joi.object({
-    castle: Joi.object({
-      title: Joi.string().required(),
-      location: Joi.string().required(),
-      image: Joi.string().required(),
-      price: Joi.number().required().min(0),
-      description: Joi.string().required()
-    }).required() 
-  });
   /* const result = castleSchema.validate(req.body); */
-  const { error } = castleSchema.validate(req.body);
-  if(error) {
-    const msg = error.details.map(el => el.message).join(',');
-    throw new ExpressError(400, msg);
-  }
   //console.log(result);
   const newCastle = new Castle(castle);
   await newCastle.save();
@@ -72,7 +78,7 @@ app.post('/castles', catchAsync(async (req, res, next) => {
 //show castle
 app.get('/castles/:id', catchAsync(async (req, res) => {
   const { id } = req.params;
-  const castle = await Castle.findById(id);
+  const castle = await Castle.findById(id).populate('reviews');
   res.render('castles/show', { castle });
 }));
 
@@ -107,7 +113,7 @@ app.use((err, req, res, next) => {
   //const { statusCode = 500, message = 'Something went wrong'} = err;
   const { statusCode = 500 } = err;
   if(!err.message) err.message = 'Something went wrong';
-  res.status(statusCode).render('./castles/error', { err });
+  res.status(statusCode).render('./error', { err });
 });
 
 app.listen(3000, () => {
