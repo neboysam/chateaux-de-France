@@ -16,11 +16,16 @@ const reviewRoutes = require('./routes/reviews');
 const { castleSchema } = require('./schemas');
 const app = express();
 
-app.set('view engine', 'ejs');
+
 app.engine('ejs', ejsMate);
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+
+/* app.use(express.static('public')); */
+app.set('public', path.join(__dirname, 'public'));
 
 mongoose.connect('mongodb://localhost:27017/castles', {
   useNewUrlParser: true,
@@ -113,7 +118,7 @@ app.use((err, req, res, next) => {
   //const { statusCode = 500, message = 'Something went wrong'} = err;
   const { statusCode = 500 } = err;
   if(!err.message) err.message = 'Something went wrong';
-  res.status(statusCode).render('./error', { err });
+  res.status(statusCode).render('error', { err });
 });
 
 app.listen(3000, () => {
