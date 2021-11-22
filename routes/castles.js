@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const flash = require('connect-flash');
 const Castle = require('../models/castle');
 const Review = require('../models/review');
 const ExpressError = require('../utils/ExpressError');
@@ -40,7 +39,7 @@ router.post('/', validateCastle, catchAsync(async (req, res, next) => {
   //console.log(result);
   const newCastle = new Castle(castle);
   await newCastle.save();
-  req.flash('success', 'Successfully added new castle.');
+  req.flash('success', 'Successfully created a new castle.');
   res.redirect('/castles');
 }));
 
@@ -48,6 +47,10 @@ router.post('/', validateCastle, catchAsync(async (req, res, next) => {
 router.get('/:id', catchAsync(async (req, res) => {
   const { id } = req.params;
   const castle = await Castle.findById(id).populate('reviews');
+  if(!castle) {
+    req.flash('error', 'Cannot find that campground!');
+    return res.redirect('/castles');
+  }
   res.render('castles/show', { castle });
 }));
 
@@ -55,6 +58,10 @@ router.get('/:id', catchAsync(async (req, res) => {
 router.get('/:id/edit', catchAsync(async (req, res) => {
   const { id } = req.params;
   const castle = await Castle.findById(id);
+  if(!castle) {
+    req.flash('error', 'Cannot find that campground!');
+    return res.redirect('/castles');
+  }
   res.render('./castles/edit', { castle });
 }));
 
@@ -64,6 +71,7 @@ router.put('/:id', catchAsync(async (req, res) => {
   const { castle } = req.body;
   const newCastle = await Castle.findByIdAndUpdate(id, castle);
   await newCastle.save();
+  req.flash('success', 'Successfully updated castle.');
   res.redirect(`/castles/${newCastle._id}`);
 }));
 
@@ -71,6 +79,7 @@ router.put('/:id', catchAsync(async (req, res) => {
 router.delete('/:id', catchAsync(async (req, res, next) => {
   const { id } = req.params;
   await Castle.findByIdAndDelete(id);
+  req.flash('success', 'Successfully deleted castle.');
   res.redirect('/castles');
 }));
 

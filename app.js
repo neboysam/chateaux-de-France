@@ -1,6 +1,5 @@
 /* CATALOGUE OF THE CASTLES IN FRANCE  */
 /* =================================== */
-
 const express = require('express');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
@@ -13,12 +12,23 @@ const Castle = require('./models/castle');
 const Review = require('./models/review');
 const ExpressError = require('./utils/ExpressError');
 const catchAsync = require('./utils/catchAsync');
-const reviewRoutes = require('./routes/reviews');
 const castleRoutes = require('./routes/castles');
-/* const { reviewSchema } = require('./schemas'); */
-const { castleSchema } = require('./schemas');
-const app = express();
+const reviewRoutes = require('./routes/reviews');
+/* const { reviewSchema } = require('./schemas'); 
+const { castleSchema } = require('./schemas'); */
 
+//mongoDB config
+mongoose.connect('mongodb://localhost:27017/castles', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+  console.log('Database connected.');
+});
+
+const app = express();
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -42,16 +52,6 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig));
 app.use(flash());
-
-mongoose.connect('mongodb://localhost:27017/castles', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
-  console.log('Database connected.');
-});
 
 //flash middleware
 app.use((req, res, next) => {

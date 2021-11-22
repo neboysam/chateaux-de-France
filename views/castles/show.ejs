@@ -5,16 +5,11 @@
     <div class="card mb-3">
       <img src="<%= castle.image %>" class="card-img-top" alt="castle photo">
       <div class="card-body">
-        <h5 class="card-title">
-          <%= castle.title %>
-        </h5>
-        <p class="card-text">
-          <%= castle.description %>
-        </p>
+        <h5 class="card-title"><%= castle.title %></h5>
+        <p class="card-text"><%= castle.description %></p>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item text-muted">Région: <%= castle.location %>
-        </li>
+        <li class="list-group-item text-muted">Région: <%= castle.location %></li>
         <li class="list-group-item">Tarif de visite: <%= castle.price %> €</li>
       </ul>
       <div class="card-body">
@@ -48,15 +43,13 @@
     <% for(let review of castle.reviews) { %>
       <div class="card mb-3 ">
         <div class="card-body">
-          <h5 class="card-title">Rating: <%= review.rating %>
-          </h5>
-          <p class="card-text">Review: <%= review.body %>
-          </p>
+          <h5 class="card-title">Rating: <%= review.rating %></h5>
+          <p class="card-text">Review: <%= review.body %></p>
           <form action="/castles/<%= castle._id %>/review/<%= review._id %>?_method=DELETE" method="POST">
             <button class="btn btn-sm btn-outline-danger">Delete</button>
           </form>
         </div>
       </div>
-      <% } %>
+    <% } %>
   </div>
 </div>
