@@ -37,7 +37,13 @@ router.post('/', isLoggedIn, validateCastle, catchAsync(async (req, res, next) =
 //show castle
 router.get('/:id', catchAsync(async (req, res) => {
   const { id } = req.params;
-  const castle = await Castle.findById(id).populate('reviews').populate('author');
+  const castle = await Castle.findById(id).populate({
+    path: 'reviews',
+    populate: {
+      path: 'author'
+    }
+  }).populate('author');
+  /* console.log(castle.author._id); */
   if(!castle) {
     req.flash('error', 'Cannot find that campground!');
     return res.redirect('/castles');

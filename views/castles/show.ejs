@@ -12,8 +12,7 @@
         <li class="list-group-item text-muted">Région: <%= castle.location %></li>
         <li class="list-group-item">Tarif de visite: <%= castle.price %> €</li>
         <li class="list-group-item">Auteur: <%= castle.author.username %></li>
-      </ul>
-      <!-- ejs: if(currentUser && currentUser._id === castle.author._id) this does not work --> 
+      </ul> 
       <% if(currentUser && castle.author._id.equals(currentUser._id)) { %> <!-- currentUser._id: new ObjectId('xxxxxxx'). new ObjectId() - This is the "standard" way to instantiate an object and is equivalent to new ObjectId, stackoverflow.com -->
         <div class="card-body">
           <a class="card-link btn btn-info" href="/castles/<%= castle._id %>/edit">Edit</a>
@@ -29,6 +28,7 @@
     </div>
   </div>
   <div class="col-6">
+    <% if(currentUser) { %>
     <h2>Leave a Review</h2>
     <form action="/castles/<%= castle._id %>/review" method="POST" class="mb-3 validated-form" novalidate>
       <div class="mb-3">
@@ -44,14 +44,18 @@
       </div>
       <button class="btn btn-success">Submit</button>
     </form>
+    <% } %> 
     <% for(let review of castle.reviews) { %>
       <div class="card mb-3 ">
         <div class="card-body">
           <h5 class="card-title">Rating: <%= review.rating %></h5>
+          <h6 class="card-subtitle mb-2 text-muted">Author: <%= review.author.username %> </h6>
           <p class="card-text">Review: <%= review.body %></p>
-          <form action="/castles/<%= castle._id %>/review/<%= review._id %>?_method=DELETE" method="POST">
-            <button class="btn btn-sm btn-outline-danger">Delete</button>
-          </form>
+          <% if(currentUser && review.author.equals(currentUser._id)) { %>
+            <form action="/castles/<%= castle._id %>/review/<%= review._id %>?_method=DELETE" method="POST">
+              <button class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+          <% } %>
         </div>
       </div>
     <% } %>

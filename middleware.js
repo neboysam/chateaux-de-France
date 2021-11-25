@@ -1,6 +1,7 @@
 const Castle = require('./models/castle');
+const Review = require('./models/review');
 const ExpressError = require('./utils/ExpressError');
-const { castleSchema } = require('./schemas');
+const { castleSchema, reviewSchema } = require('./schemas');
 
 module.exports.isLoggedIn = (req, res, next) => {
   //console.log("req.user: ", req.user); 
@@ -34,6 +35,26 @@ module.exports.isAuthor = async (req, res, next) => {
   const { id } = req.params;
   const castle = await Castle.findById(id);
   if(!castle.author.equals(req.user._id)) {
+    req.flash('error', 'You do not have permission to do that!');
+    return res.redirect(`/castles/${id}`);
+  }
+  next();
+}
+
+module.exports.validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
+  if(error) {
+    const msg = error.details.map(el => el.message).join(',');
+    throw new ExpressError(400, msg);
+  } else {
+    next();
+  }
+}
+
+module.exports.isReviewAuthor = async (req, res, next) => {
+  const { id, reviewId } = req.params;
+  const review = await Review.findById(reviewId);
+  if(!review.author.equals(req.user._id)) {
     req.flash('error', 'You do not have permission to do that!');
     return res.redirect(`/castles/${id}`);
   }
