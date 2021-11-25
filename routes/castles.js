@@ -2,20 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Castle = require('../models/castle');
 const Review = require('../models/review');
-const ExpressError = require('../utils/ExpressError');
+/* const ExpressError = require('../utils/ExpressError'); */
 const catchAsync = require('../utils/catchAsync');
-const { castleSchema } = require('../schemas');
-const { isLoggedIn } = require('../middleware');
-
-const validateCastle = (req, res, next) => {
-  const { error } = castleSchema.validate(req.body);
-  if(error) {
-    const msg = error.details.map(el => el.message).join(',');
-    throw new ExpressError(400, msg);
-  } else {
-    next();
-  }
-}
+const { isLoggedIn, validateCastle, isAuthor } = require('../middleware');
 
 //===========================================
 //CASTLES ROUTES
@@ -38,6 +27,7 @@ router.post('/', isLoggedIn, validateCastle, catchAsync(async (req, res, next) =
   /* if(!castle) throw new ExpressError(400, 'Invalid Castle Data'); */ //all the form fields are empty = !req.body.castle
   /* const result = castleSchema.validate(req.body); */
   //console.log(result);
+  castle.author = req.user._id;
   const newCastle = new Castle(castle);
   await newCastle.save();
   req.flash('success', 'Successfully created a new castle.');
@@ -47,7 +37,7 @@ router.post('/', isLoggedIn, validateCastle, catchAsync(async (req, res, next) =
 //show castle
 router.get('/:id', catchAsync(async (req, res) => {
   const { id } = req.params;
-  const castle = await Castle.findById(id).populate('reviews');
+  const castle = await Castle.findById(id).populate('reviews').populate('author');
   if(!castle) {
     req.flash('error', 'Cannot find that campground!');
     return res.redirect('/castles');
@@ -56,7 +46,7 @@ router.get('/:id', catchAsync(async (req, res) => {
 }));
 
 //form to update castle
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
   const { id } = req.params;
   const castle = await Castle.findById(id);
   if(!castle) {
@@ -67,18 +57,23 @@ router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
 }));
 
 //update castle
-router.put('/:id', isLoggedIn, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { castle } = req.body;
-  const newCastle = await Castle.findByIdAndUpdate(id, castle);
+  //req.user._id is the same as castle.author: new ObjectId("619cbc66140b7f02e1ff45b3")
+  const newCastle = await Castle.findByIdAndUpdate(id, req.body.castle);
   await newCastle.save();
   req.flash('success', 'Successfully updated castle.');
   res.redirect(`/castles/${newCastle._id}`);
 }));
 
 //delete castle
-router.delete('/:id', isLoggedIn, catchAsync(async (req, res, next) => {
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res, next) => {
   const { id } = req.params;
+  /* const castle = await Castle.findById(id);
+  if(!castle.author.equals(req.user._id)) {
+    req.flash('error', 'You do not have permission to do that!');
+    return res.redirect(`/castles/${id}`);
+  } */
   await Castle.findByIdAndDelete(id);
   req.flash('success', 'Successfully deleted castle.');
   res.redirect('/castles');

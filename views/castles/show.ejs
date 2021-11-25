@@ -11,14 +11,18 @@
       <ul class="list-group list-group-flush">
         <li class="list-group-item text-muted">Région: <%= castle.location %></li>
         <li class="list-group-item">Tarif de visite: <%= castle.price %> €</li>
+        <li class="list-group-item">Auteur: <%= castle.author.username %></li>
       </ul>
-      <div class="card-body">
-        <a class="card-link btn btn-info" href="/castles/<%= castle._id %>/edit">Edit</a>
-        <form class="d-inline" action="/castles/<%= castle._id%>?_method=DELETE" method="POST">
-          <button class="btn btn-danger">Delete</button>
-        </form>
-        <a class="card-link btn btn-outline-info" href="/castles">Back to All Castles</a>
-      </div>
+      <!-- ejs: if(currentUser && currentUser._id === castle.author._id) this does not work --> 
+      <% if(currentUser && castle.author._id.equals(currentUser._id)) { %> <!-- currentUser._id: new ObjectId('xxxxxxx'). new ObjectId() - This is the "standard" way to instantiate an object and is equivalent to new ObjectId, stackoverflow.com -->
+        <div class="card-body">
+          <a class="card-link btn btn-info" href="/castles/<%= castle._id %>/edit">Edit</a>
+          <form class="d-inline" action="/castles/<%= castle._id %>?_method=DELETE" method="POST">
+            <button class="btn btn-danger">Delete</button>
+          </form>
+          <a class="card-link btn btn-outline-info" href="/castles">Back to All Castles</a>
+        </div>
+      <% } %> 
       <div class="card-footer text-muted">
         2 days ago
       </div>
@@ -26,7 +30,7 @@
   </div>
   <div class="col-6">
     <h2>Leave a Review</h2>
-    <form action="/castles/<%= castle._id%>/review" method="POST" class="mb-3 validated-form" novalidate>
+    <form action="/castles/<%= castle._id %>/review" method="POST" class="mb-3 validated-form" novalidate>
       <div class="mb-3">
         <label class="form-label" for="rating">Rating</label>
         <input class="form-range" type="range" min="1" max="5" name="review[rating]" id="rating">

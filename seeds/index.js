@@ -18,10 +18,11 @@ const sample = array => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
   await Castle.deleteMany({});
-  for(let i = 0; i < 15; i++ ) {
+  for(let i = 0; i < 5; i++ ) {
     const random471 = Math.floor(Math.random() * 471);
     const price = Math.floor(Math.random() * 20) + 10;
     const castle = new Castle({
+      author: '619cb7cb24524edf8cb26094',
       title: `${sample(titles)}, ${sample(places)}`,
       location: `${cities[random471].city}, ${cities[random471].admin_name}`, // the same as `${sample(cities).city}, ${sample(cities).admin_name}`
       image: `${sample(images)}`,
