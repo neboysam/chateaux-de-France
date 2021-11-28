@@ -1,5 +1,10 @@
 /* CATALOGUE OF THE CASTLES IN FRANCE  */
 /* =================================== */
+
+if (process.env.NODE_ENV !== "production") {
+  require('dotenv').config();
+}
+
 const express = require('express');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
@@ -18,10 +23,11 @@ const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const { getMaxListeners } = require('process');
+const MongoStore = require('connect-mongo');
 
 //mongoDB config
-mongoose.connect('mongodb://localhost:27017/castles', {
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/castles';
+mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -43,8 +49,23 @@ app.use(methodOverride('_method'));
 /* app.use(express.static('public')); */
 app.use(express.static(path.join(__dirname, 'public')));
 
+const secret = proces.env.SECRET || 'thisisasecret';
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret
+}
+});
+
+store.on('error', function(e) {
+  console.log("Session store error: ", e);
+});
+
 const sessionConfig = {
-  secret: 'thisisasecret',
+  store, //store: store
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
