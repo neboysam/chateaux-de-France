@@ -26,7 +26,8 @@ const LocalStrategy = require('passport-local');
 const MongoStore = require('connect-mongo');
 
 //mongoDB config
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/castles';
+//'mongodb://localhost:27017/castles'
+const dbUrl = process.env.DB_URL;
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true
