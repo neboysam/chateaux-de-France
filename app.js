@@ -31,7 +31,6 @@ const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/castles';
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-
   useCreateIndex: true,
   useFindAndModify: false
 });
@@ -59,7 +58,7 @@ const store = MongoStore.create({
   mongoUrl: dbUrl,
   touchAfter: 24 * 60 * 60,
   crypto: {
-    secret
+    secret: 'thisisasecret'
 }
 });
 
@@ -69,7 +68,7 @@ store.on('error', function(e) {
 
 const sessionConfig = {
   store, //store: store
-  secret,
+  secret: 'thisisasecret',
   resave: false,
   saveUninitialized: true,
   cookie: {
