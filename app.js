@@ -49,7 +49,7 @@ app.use(methodOverride('_method'));
 /* app.use(express.static('public')); */
 app.use(express.static(path.join(__dirname, 'public')));
 
-const secret = proces.env.SECRET || 'thisisasecret';
+const secret = process.env.SECRET || 'thisisasecret';
 
 const store = MongoStore.create({
   mongoUrl: dbUrl,
@@ -121,7 +121,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render('error', { err });
 });
 
-const port = proces.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Castles: Server is started on port ${port}`);
