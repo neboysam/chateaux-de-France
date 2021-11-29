@@ -5,9 +5,6 @@ if (process.env.NODE_ENV !== "production") {
   require('dotenv').config();
 }
 
-console.log(process.env);
-//DB_URL=mongodb+srv://castleadmin:2SdzPdago2000!@cluster0.yldjh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-
 const express = require('express');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
